@@ -59,7 +59,7 @@ public class LoadBalancerConfiguration {
     }
 
     public String getZkConnectString(){
-        return String.format("%s:%s",configuration.get(zkQuorum,"localhost"),configuration.get(zkPort,"2183"));
+        return String.format("%s:%s",configuration.get(zkQuorum,"localhost"),configuration.get(zkPort,"2181"));
     }
 
     private String getZkLbUserName(){
