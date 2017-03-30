@@ -576,7 +576,7 @@
       </dependency>
       <dependency>
         <groupId>org.apache.phoenix</groupId>
-        <artifactId>phoenix-queryserver-loadbalancer</artifactId>
+        <artifactId>phoenix-load-balancer</artifactId>
         <version>${project.version}</version>
       </dependency>
 

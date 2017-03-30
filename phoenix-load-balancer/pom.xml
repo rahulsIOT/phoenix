@@ -29,7 +29,7 @@
     <artifactId>phoenix</artifactId>
     <version>4.10.0-HBase-1.2-SNAPSHOT</version>
   </parent>
-  <artifactId>phoenix-queryserver-loadbalancer</artifactId>
+  <artifactId>phoenix-load-balancer</artifactId>
   <name>Phoenix Load Balancer</name>
   <description>A Load balancer which routes calls to Phoenix Query Server</description>
 
