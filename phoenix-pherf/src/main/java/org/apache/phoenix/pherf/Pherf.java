@@ -30,6 +30,8 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import org.apache.phoenix.loadbalancer.service.LoadBalancer;
+import org.apache.phoenix.loadbalancer.service.PhoenixQueryServerNode;
 import org.apache.phoenix.pherf.PherfConstants.CompareType;
 import org.apache.phoenix.pherf.PherfConstants.GeneratePhoenixStats;
 import org.apache.phoenix.pherf.configuration.XMLConfigParser;
@@ -162,7 +164,8 @@ public class Pherf {
         compareType = command.hasOption("useAverageCompareType") ? CompareType.AVERAGE : CompareType.MINIMUM;
         thinDriver = command.hasOption("thin");
         if (thinDriver) {
-            queryServerUrl = command.getOptionValue("server", "http://localhost:8765");
+            PhoenixQueryServerNode phoenixQueryServerNode = LoadBalancer.getLoadBalancer().getSingleServiceLocation();
+            queryServerUrl = String.format("http://%s:%s",phoenixQueryServerNode.getHost(),phoenixQueryServerNode.getPort());
         } else {
             queryServerUrl = null;
         }
