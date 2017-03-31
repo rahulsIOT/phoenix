@@ -130,6 +130,11 @@ public class LoadBalancer {
             throw exception;
         }
         List<String> currentNodes = curaFramework.getChildren().forPath(CONFIG.getParentPath());
+        //there may not be any registered node ,so we need to throw any exception
+        //if there is no registered node
+        if (currentNodes.size() == 0) {
+            throw new Exception(" There is no registered PQS node with zookeeper ");
+        }
         List<PhoenixQueryServerNode> returnNodes = new ArrayList<>();
         for(String node:currentNodes) {
             byte[] bytes = curaFramework.getData().forPath(CONFIG.getParentPath() + "/" + node);
