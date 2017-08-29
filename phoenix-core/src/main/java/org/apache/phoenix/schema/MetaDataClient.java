@@ -1418,6 +1418,16 @@ public class MetaDataClient {
                         throw new SQLFeatureNotSupportedException("An index may only be created for a VIEW through a tenant-specific connection");
                     }
                 }
+                int maxNumOfAllowedIndex =  connection.getQueryServices().getProps().getInt(
+                        QueryServices.PHOENIX_MAX_INDEXES_ALLOWED_PER_TABLE,
+                        QueryServicesOptions.DEFAULT_MAX_INDEXES_ALLOWED_PER_TABLE);
+
+                if ((dataTable.getIndexes()!=null) && (dataTable.getIndexes().size() >= maxNumOfAllowedIndex)) {
+                    throw new SQLException("Reached max allowed indexes per table. Default is "
+                           + QueryServicesOptions.DEFAULT_MAX_INDEXES_ALLOWED_PER_TABLE
+                            +" . To increase, change the value of "+QueryServices.PHOENIX_MAX_INDEXES_ALLOWED_PER_TABLE);
+                }
+
                 if (!dataTable.isImmutableRows()) {
                     if (hbaseVersion < PhoenixDatabaseMetaData.MUTABLE_SI_VERSION_THRESHOLD) {
                         throw new SQLExceptionInfo.Builder(SQLExceptionCode.NO_MUTABLE_INDEXES).setTableName(indexTableName.getTableName()).build().buildException();

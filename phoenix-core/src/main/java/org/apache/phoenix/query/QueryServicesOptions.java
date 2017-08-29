@@ -94,6 +94,7 @@ import static org.apache.phoenix.query.QueryServices.UPLOAD_BINARY_DATA_TYPE_ENC
 import static org.apache.phoenix.query.QueryServices.USE_BYTE_BASED_REGEX_ATTRIB;
 import static org.apache.phoenix.query.QueryServices.USE_INDEXES_ATTRIB;
 import static org.apache.phoenix.query.QueryServices.USE_STATS_FOR_PARALLELIZATION;
+import static org.apache.phoenix.query.QueryServices.PHOENIX_MAX_INDEXES_ALLOWED_PER_TABLE;
 
 import java.util.HashSet;
 import java.util.Map.Entry;
@@ -331,6 +332,8 @@ public class QueryServicesOptions {
     // RS -> RS calls for upsert select statements are enabled by default
     public static final boolean DEFAULT_ENABLE_SERVER_UPSERT_SELECT = true;
 
+    public static final int DEFAULT_MAX_INDEXES_ALLOWED_PER_TABLE = 20;
+
     private final Configuration config;
 
     private QueryServicesOptions(Configuration config) {
@@ -408,7 +411,8 @@ public class QueryServicesOptions {
             .setIfUnset(TRACING_BATCH_SIZE, DEFAULT_TRACING_BATCH_SIZE)
             .setIfUnset(TRACING_THREAD_POOL_SIZE, DEFAULT_TRACING_THREAD_POOL_SIZE)
             .setIfUnset(STATS_COLLECTION_ENABLED, DEFAULT_STATS_COLLECTION_ENABLED)
-            .setIfUnset(USE_STATS_FOR_PARALLELIZATION, DEFAULT_USE_STATS_FOR_PARALLELIZATION);
+            .setIfUnset(USE_STATS_FOR_PARALLELIZATION, DEFAULT_USE_STATS_FOR_PARALLELIZATION)
+            .setIfUnset(PHOENIX_MAX_INDEXES_ALLOWED_PER_TABLE, DEFAULT_MAX_INDEXES_ALLOWED_PER_TABLE);
         // HBase sets this to 1, so we reset it to something more appropriate.
         // Hopefully HBase will change this, because we can't know if a user set
         // it to 1, so we'll change it.
@@ -640,6 +644,11 @@ public class QueryServicesOptions {
 
     public int getScanCacheSize() {
         return config.getInt(SCAN_CACHE_SIZE_ATTRIB, DEFAULT_SCAN_CACHE_SIZE);
+    }
+
+
+    public int maxNumberOfIndexesPerTable() {
+        return config.getInt(PHOENIX_MAX_INDEXES_ALLOWED_PER_TABLE,DEFAULT_MAX_INDEXES_ALLOWED_PER_TABLE);
     }
 
     public QueryServicesOptions setMaxServerCacheTTLMs(int ttl) {

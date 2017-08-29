@@ -61,6 +61,8 @@ import org.apache.phoenix.jdbc.PhoenixStatement;
 import org.apache.phoenix.parse.NamedTableNode;
 import org.apache.phoenix.parse.TableName;
 import org.apache.phoenix.query.BaseTest;
+import org.apache.phoenix.query.QueryServices;
+import org.apache.phoenix.query.QueryServicesOptions;
 import org.apache.phoenix.schema.PTable;
 import org.apache.phoenix.schema.PTableImpl;
 import org.apache.phoenix.schema.PTableKey;
@@ -1143,6 +1145,39 @@ public class IndexIT extends ParallelStatsDisabledIT {
             assertFalse(rs.next());
             rs.close();
             stmt.close();
+        }
+    }
+
+    @Test
+    public void indexesCountMaxLimitReached() throws Exception {
+        Properties props = PropertiesUtil.deepCopy(TEST_PROPERTIES);
+        props.setProperty(QueryServices.PHOENIX_MAX_INDEXES_ALLOWED_PER_TABLE, "2");
+        String tableName = "TBL_" + generateUniqueName();
+        String indexName = "IND_" + generateUniqueName();
+        String fullTableName = SchemaUtil.getTableName(TestUtil.DEFAULT_SCHEMA_NAME, tableName);
+        Connection conn = DriverManager.getConnection(getUrl(), props);
+        conn.setAutoCommit(false);
+        String ddl ="CREATE TABLE " + fullTableName + TestUtil.TEST_TABLE_SCHEMA + tableDDLOptions;
+        Statement stmt = conn.createStatement();
+        stmt.execute(ddl);
+        boolean indexLimitExceed = false;
+        ddl = "CREATE " + (localIndex ? "LOCAL" : "") + " INDEX " + indexName + " ON " + fullTableName + " (int_col2)";
+        conn.createStatement().execute(ddl);
+        indexName = "IND_" + generateUniqueName();
+        ddl = "CREATE " + (localIndex ? "LOCAL" : "") + " INDEX " + indexName + " ON " + fullTableName +
+                " (varchar_col2)";
+        conn.createStatement().execute(ddl);
+        try {
+            indexName = "IND_" + generateUniqueName();
+            ddl = "CREATE " + (localIndex ? "LOCAL" : "") + " INDEX " + indexName + " ON " + fullTableName +
+                    " (long_col2)";
+            conn.createStatement().execute(ddl);
+
+        }catch(SQLException sqlException) {
+            indexLimitExceed = true;
+        } finally {
+            assertTrue(" number of indexes cannot exceed value specified in phoenix.max.indexes.allowed.per.table"
+                    ,indexLimitExceed);
         }
     }
 

@@ -286,6 +286,9 @@ public interface QueryServices extends SQLCloseable {
     //Update Cache Frequency default config attribute
     public static final String DEFAULT_UPDATE_CACHE_FREQUENCY_ATRRIB  = "phoenix.default.update.cache.frequency";
 
+    //Hard Limit on number of indexes a table can have in Phoenix.
+    public static final String PHOENIX_MAX_INDEXES_ALLOWED_PER_TABLE = "phoenix.max.indexes.allowed.per.table";
+
     /**
      * Get executor service used for parallel scans
      */
